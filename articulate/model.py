@@ -326,6 +326,16 @@ class ParametricModel:
             pose = pose_list[i].view(-1, len(self.parent), 3, 3)
             tran = tran_list[i].view(-1, 3) - tran_list[i].view(-1, 3)[:1] if tran_list else None
             verts.append(self.forward_kinematics(pose, tran=tran, calc_mesh=True)[2])
+
+        # for i in range(len(verts)):
+        #     # 获取当前张量
+        #     current_tensor = verts[i]
+        #     # 将当前张量中的每个点的 x 和 y 坐标乘以 -1
+        #     current_tensor[:, :, 0] *= -1  # 乘以 -1，翻转 x 坐标
+        #     current_tensor[:, :, 1] *= -1  # 乘以 -1，翻转 y 坐标
+        #     # 更新 verts 中的当前张量
+        #     verts[i] = current_tensor
+
         self.view_mesh(verts, fps, distance_between_subjects=distance_between_subjects)
 
     def view_mesh_overlay(self, verts, images, K, Tcw=torch.eye(4), fps=60):

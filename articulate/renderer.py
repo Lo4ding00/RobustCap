@@ -85,3 +85,17 @@ class Renderer:
         output_image = (color[:, :, :3] * valid_mask +
                         (1 - valid_mask) * image).astype(np.uint8)
         return output_image
+
+    def my_joint_render(self, image, joints, K):
+        import cv2
+        image_points, _ = cv2.projectPoints(joints.numpy(), np.zeros((3, 1)), np.zeros((3, 1)), K.cpu().numpy(), None)
+
+        image_size = (image.shape[1], image.shape[0])
+        image_mask = np.zeros((image_size[1], image_size[0], 3), dtype=np.uint8)
+
+        for point in image_points.reshape(-1, 2):
+            cv2.circle(image_mask, tuple(map(int, point)), 10, (0, 255, 0), -1)
+
+        # cv2.imshow('Reprojected 2D Points', image)
+        output_image = (image_mask + (1 - image_mask) * image).astype(np.uint8)
+        return output_image
